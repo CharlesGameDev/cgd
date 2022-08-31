@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/profile/style.css">
+    <title>Document</title>
+</head>
+<body>
+    <div class="topnav">
+        <button class="yourcommentsend" onclick="window.location.href = '../'">Home</button>
+        <button class="yourcommentsend" onclick="window.location.href = '/login'">Log in</button>
+        <button class="yourcommentsend" onclick="window.location.href = '/signup'">Sign up</button>
+        <span id="usernamedisplay">Logged in as</span>
+        <button id="logoutbtn" class="yourcommentsend">Log out</button>
+        <h1>Charles Game Dev</h1>
+    </div>
+
+    <span id="error" class="error header1"></span>
+    <br>
+    <span id="username" class="header1"></span>
+    <br>
+    <span id="description" class="header2"></span>
+    <br>
+    <span id="email" class="header3"></span>
+    <br>
+
+    <script type="module" src="index.js"></script>
+
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-analytics.js";
+        import { getDatabase, ref, push, child, onValue } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-database.js";
+        import { loadComments, clearComments, sendMessage, isLoggedIn, firebaseConfig, getCookie, logout, getLoggedUserMeta } from "/js/util.js";
+        import { editDescription } from "/profile/index.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig());
+        const analytics = getAnalytics(app);
+        let username = getCookie("username");
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has("user")) {
+            username = urlParams.get("user");
+        }
+
+        if (username == getCookie("username") && !isLoggedIn()) {
+            document.location.href = "../login/"
+        }
+
+        if (isLoggedIn()) {
+            document.getElementById("usernamedisplay").innerText += " " + getCookie("username");
+            document.getElementById("logoutbtn").addEventListener("click", logout);
+        } else {
+            document.getElementById("logoutbtn").remove();
+            document.getElementById("usernamedisplay").remove();
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const db = getDatabase();
+            const dbRef = getLoggedUserMeta(username).then((snapshot) => {
+                if (snapshot.exists()) {
+                    const val = snapshot.val();
+                    const usernametxt = document.getElementById("username");
+                    usernametxt.innerText = username;
+                    if (username == "Charles Game Dev") {
+                        // usernametxt.className += " gold";
+                    }
+                    const descriptiontxt = document.getElementById("description");
+                    descriptiontxt.innerText = val.description;
+                    if (val.showemail) {
+                        document.getElementById("email").innerText = val.email;
+                    }
+                    if (getCookie("username") == username) {
+                        const edit = document.createElement("button");
+                        edit.id = "editdescriptionbtn";
+                        edit.className = "yourcommentsend yourcommentsend2 material-symbols-outlined";
+                        edit.innerText = "edit";
+                        edit.addEventListener("click", () => {editDescription(val.description)});
+
+                        descriptiontxt.appendChild(edit);
+                    }
+                } else {
+                    document.getElementById("error").innerText = "User \"" + username + "\" does not exist";
+                    return;
+                }
+            })
+        });
+    </script>
+</body>
+</html>

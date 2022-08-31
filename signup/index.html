@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/login/style.css">
+    <link rel="stylesheet" href="/signup/style.css">
+    <title>Document - Signup</title>
+</head>
+<body>
+    <script type="text/javascript" src="/js/md5.js"></script>
+    <script type="module" src="index.js"></script>
+
+    <div id="loginboard" class="login">
+        <h1>Sign up</h1>
+        <span>Username</span>
+        <br>
+        <input id="username" class="yourcommentinput">
+        <br>
+        <br>
+        <span>Email (Optional)</span>
+        <br>
+        <input id="email" type="email" class="yourcommentinput">
+        <br>
+        <br>
+        <span>Password</span>
+        <br>
+        <input id="password" type="password" class="yourcommentinput">
+        <br>
+        <br>
+        <button id="login" class="yourcommentsend">Sign up</button>
+        <br>
+        <br>
+        <button id="back" class="yourcommentsend" onclick="window.location.href = '../'">Back</button>
+        <br>
+        <br>
+        <br>
+        <span id="msg" class="error"></span>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-analytics.js";
+        import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-database.js";
+        import { firebaseConfig, setCookie, getCookie, getLoggedUserMeta } from "/js/util.js";
+
+        const app = initializeApp(firebaseConfig());
+        const analytics = getAnalytics(app);
+        const db = getDatabase();
+        const usernameinput = document.getElementById("username");
+        usernameinput.value = getCookie("username");
+        const passwordinput = document.getElementById("password");
+        passwordinput.value = "";
+        const emailinput = document.getElementById("email");
+        emailinput.value = getCookie("email");
+
+        document.getElementById("login").addEventListener("click", function(){
+            const username = usernameinput.value;
+            const email = emailinput.value;
+            const passraw = passwordinput.value;
+            const msg = document.getElementById("msg");
+            msg.innerText = "";
+            msg.className = "error";
+            if (username.trim() == "") {
+                msg.innerText = "Username cannot be empty";
+                return;
+            }
+            if (passraw.length < 9) {
+                msg.innerText = "Password must be greater than 8 characters";
+                return;
+            }
+            const pass = md5(passraw);
+            const dbRef = getLoggedUserMeta(username).then((snapshot) => {
+                if (snapshot.exists()) {
+                    msg.innerText = "User already exists";
+                } else {
+                    if (username.trim().replace(" ", "") == "CharlesGameDev") {
+                        msg.innerText = "no";
+                        return;
+                    }
+                    setCookie("username", username);
+                    setCookie("email", email);
+                    setCookie("hash", pass);
+                    const userdat = {"comments": {}, "email": email, hash: pass};
+
+                    const updates = {};
+                    updates["users/" + username] = userdat;
+
+                    update(ref(db), updates);
+
+                    msg.className = "success";
+                    msg.innerText = "Signed up";
+
+                    window.location.href = "../";
+                }
+            })
+        });
+    </script>
+</body>
+</html>

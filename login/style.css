@@ -1,0 +1,18 @@
+.login {
+    width: 400px;
+    height: 400px;
+    margin: auto;
+    border-style: solid;
+    border-color: black;
+    background-color: #3b3b3b;
+    pointer-events: none;
+    text-align: center;
+}
+
+.yourcommentinput {
+    margin-left: 0px;
+}
+
+.yourcommentsend {
+    margin-left: 0px;
+}

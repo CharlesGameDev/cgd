@@ -1,0 +1,137 @@
+@media (prefers-color-scheme: light) {
+    :root {
+        --color: black;
+        --colori: white;
+        --color1: #dbdbdb;
+        --color2: #cbcbcb;
+        --color3: #bbbbbb;
+        --color4: #ababab;
+        --color5: #9b9b9b;
+        --background-color: var(--color1);
+    }
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color: white;
+        --colori: black;
+        --color1: #2b2b2b;
+        --color2: #3b3b3b;
+        --color3: #4b4b4b;
+        --color4: #4b4b5b;
+        --color5: #5b5b5b;
+        --color6: #6b6b6b;
+        --background-color: var(--color1);
+    }
+}
+
+body {
+    background-color: var(--background-color);
+    color: var(--color);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: bold;
+}
+
+.comment {
+    width: 400px;
+    border-style: solid;
+    border-color: var(--colori);
+    background-color: var(--color2);
+    pointer-events: none;
+}
+
+.commentbody {
+    margin-left: 20px;
+    display: inline-block;
+    pointer-events: all;
+}
+
+.yourcommentinput {
+    pointer-events: all;
+    margin-left: 20px;
+    background-color: var(--color3);
+    border-color: var(--colori);
+    color: var(--color);
+}
+
+.yourcommentsend {
+    margin-left: 20px;
+    background-color: var(--color3);
+    border-color: var(--colori);
+    color: var(--color);
+    width: 100px;
+    height: 25px;
+    pointer-events: all;
+
+    transition: 0.2s;
+}
+.yourcommentsend:hover {
+    transform: scale(1.2, 1.2);
+    background-color: var(--color5);
+    cursor: pointer;
+}
+.yourcommentsend2 {
+    width: 40px;
+    height: 40px;
+}
+
+.commentbodysmall {
+    font-weight: normal;
+}
+
+.material-symbols-outlined {
+    margin-left: 20px;
+}
+
+.topnav {
+    background-color: var(--color6);
+    overflow: hidden;
+    width: 100%;
+    height: 50px;
+}
+
+.topnav button {
+    margin-top: 12.5px;
+}
+.topnav h1 {
+    margin: 12.5px;
+    margin-top: 0px;
+    float: right;
+}
+.topnav span {
+    margin-left: 10px;
+}
+
+textarea {
+    resize: none;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.error {
+    color: #Fb2b2b;
+}
+
+.success {
+    color: #2bFb2b;
+}
+
+.gold {
+    color: #FbFb2b;
+}
+
+.purple {
+    color: #Fb2bFb;
+}
+
+.header1 {
+    font-size: 2em;
+}
+.header2 {
+    font-size: 1.5em;
+}
+.header3 {
+    font-size: 1.17em;
+}
+
+a:visited {
+    color: cyan;
+}
