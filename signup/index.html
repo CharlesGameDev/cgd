@@ -77,7 +77,7 @@
                 if (snapshot.exists()) {
                     msg.innerText = "User already exists";
                 } else {
-                    if (username.trim().replace(" ", "") == "CharlesGameDev") {
+                    if (username.trim().replaceAll(" ", "") == "CharlesGameDev") {
                         msg.innerText = "no";
                         return;
                     }
