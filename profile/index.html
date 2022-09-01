@@ -61,6 +61,10 @@
             document.getElementById("usernamedisplay").remove();
         }
 
+        if (username == "Charles Game Dev") {
+            document.getElementById("username").classList.add("gold");
+        }
+
         document.addEventListener("DOMContentLoaded", () => {
             const db = getDatabase();
             const dbRef = getLoggedUserMeta(username).then((snapshot) => {

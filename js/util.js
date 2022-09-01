@@ -27,12 +27,15 @@ export function clearComments() {
 }
 
 export function loadComments(comments) {
+    document.getElementById("loadingcomments").innerText = `Loading comments (0/${comments.length})`;
     clearComments();
     console.log("Loading comments (" + comments.length + ")");
     comments = comments.reverse();
     for (let i = 0; i < comments.length; i++) {
         createComment(comments[i][1], comments[i][0]);
+        document.getElementById("loadingcomments").innerText = `Loading comments (${i + 1}/${comments.length})`;
     }
+    document.getElementById("loadingcomments").innerText = "";
 }
 
 function createComment(comment, index) {
@@ -70,6 +73,13 @@ function createComment(comment, index) {
         like.className = "yourcommentsend yourcommentsend2 material-symbols-outlined";
         like.innerText = "thumb_up";
         like.id = "likebtn";
+        if (commentMeta != null) {
+            if (commentMeta.liked) {
+                like.className = "yourcommentsend yourcommentsend2 yourcommentsend3 material-symbols-outlined"
+            } else {
+                like.className = "yourcommentsend yourcommentsend2 material-symbols-outlined"
+            }
+        }
         const liketext = document.createElement("span");
         liketext.innerText = " " + comment.likes;
         liketext.id = "likes";
@@ -82,6 +92,13 @@ function createComment(comment, index) {
         dislike.id = "dislikebtn";
         dislike.className = "yourcommentsend yourcommentsend2 material-symbols-outlined";
         dislike.innerText = "thumb_down";
+        if (commentMeta != null) {
+            if (commentMeta.disliked) {
+                dislike.className = "yourcommentsend yourcommentsend2 yourcommentsend3 material-symbols-outlined"
+            } else {
+                dislike.className = "yourcommentsend yourcommentsend2 material-symbols-outlined"
+            }
+        }
         const disliketext = document.createElement("span");
         disliketext.innerText = " " + comment.dislikes;
         disliketext.id = "dislikes";
@@ -93,7 +110,7 @@ function createComment(comment, index) {
             const del = document.createElement("button");
             del.addEventListener("click", () => deleteComment(commentMeta));
             del.id = "deletebtn";
-            del.className = "yourcommentsend yourcommentsend2 material-symbols-outlined";
+            del.className = "yourcommentsend yourcommentsend2 yourcommentsend4 material-symbols-outlined";
             del.innerText = "delete";
     
             commentdiv.appendChild(del);
@@ -269,4 +286,9 @@ export function firebaseConfig() {
         measurementId: "G-SRC4JBGFHS",
         databaseURL: "https://cgdsite-69ea0-default-rtdb.firebaseio.com",
     };
+}
+
+export function onOff(val) {
+    if (val == "on") return true;
+    return false;
 }

@@ -1,3 +1,4 @@
+/*
 @media (prefers-color-scheme: light) {
     :root {
         --color: black;
@@ -10,19 +11,22 @@
         --background-color: var(--color1);
     }
 }
-@media (prefers-color-scheme: dark) {
-    :root {
-        --color: white;
-        --colori: black;
-        --color1: #2b2b2b;
-        --color2: #3b3b3b;
-        --color3: #4b4b4b;
-        --color4: #4b4b5b;
-        --color5: #5b5b5b;
-        --color6: #6b6b6b;
-        --background-color: var(--color1);
-    }
+*/
+/* @media (prefers-color-scheme: dark) { */
+:root {
+    --color: white;
+    --colori: black;
+    --color1: #2b2b2b;
+    --color2: #3b3b3b;
+    --color3: #4b4b4b;
+    --color4: #4b4b5b;
+    --color5: #5b5b5b;
+    --color6: #6b6b6b;
+    --color7: #2b2bFb;
+    --color8: #Fb2b2b;
+    --background-color: var(--color1);
 }
+/* } */
 
 body {
     background-color: var(--background-color);
@@ -72,6 +76,15 @@ body {
 .yourcommentsend2 {
     width: 40px;
     height: 40px;
+}
+.yourcommentsend2:hover {
+    background-color: var(--color7)
+}
+.yourcommentsend3 {
+    background-color: var(--color7);
+}
+.yourcommentsend4:hover {
+    background-color: var(--color8);
 }
 
 .commentbodysmall {
@@ -132,6 +145,14 @@ textarea {
     font-size: 1.17em;
 }
 
+a {
+    color: cyan;
+}
+
 a:visited {
     color: cyan;
+}
+
+.smol {
+    font-size: 0.90em;
 }

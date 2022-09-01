@@ -21,9 +21,15 @@
         <input id="username" class="yourcommentinput">
         <br>
         <br>
-        <span>Email (Optional)</span>
+        <span>Email</span>
+        <br>
+        <span class="smol">(Used for notifications, optional)</span>
         <br>
         <input id="email" type="email" class="yourcommentinput">
+        <br>
+        <span class="smol">Public</span>
+        <br>
+        <input id="emailpublic" type="checkbox" class="yourcommentinput">
         <br>
         <br>
         <span>Password</span>
@@ -45,7 +51,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-analytics.js";
         import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-database.js";
-        import { firebaseConfig, setCookie, getCookie, getLoggedUserMeta } from "../js/util.js";
+        import { firebaseConfig, setCookie, getCookie, getLoggedUserMeta, onOff } from "../js/util.js";
 
         const app = initializeApp(firebaseConfig());
         const analytics = getAnalytics(app);
@@ -61,6 +67,7 @@
             const username = usernameinput.value;
             const email = emailinput.value;
             const passraw = passwordinput.value;
+            const showemail = onOff(document.getElementById("emailpublic").value);
             const msg = document.getElementById("msg");
             msg.innerText = "";
             msg.className = "error";
@@ -84,7 +91,7 @@
                     setCookie("username", username);
                     setCookie("email", email);
                     setCookie("hash", pass);
-                    const userdat = {"comments": {}, "email": email, hash: pass};
+                    const userdat = {"comments": {}, "email": email, hash: pass, "showemail": showemail};
 
                     const updates = {};
                     updates["users/" + username] = userdat;
