@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../login/style.css">
     <link rel="stylesheet" href="./style.css">
-    <title>Document - Signup</title>
+    <title>Charnold Games - Signup</title>
 </head>
 <body>
     <script type="text/javascript" src="../js/md5.js"></script>
@@ -43,6 +43,10 @@
         <button id="back" class="yourcommentsend" onclick="window.location.href = '../'">Back</button>
         <br>
         <br>
+        <span>Already have an account?</span>
+        <br>
+        <a href="../login/">Log in</a>
+        <br>
         <br>
         <span id="msg" class="error"></span>
     </div>
@@ -51,7 +55,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-analytics.js";
         import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-database.js";
-        import { firebaseConfig, setCookie, getCookie, getLoggedUserMeta, onOff } from "../js/util.js";
+        import { firebaseConfig, setCookie, getCookie, getLoggedUserMeta, onOff, isLoggedIn } from "../js/util.js";
 
         const app = initializeApp(firebaseConfig());
         const analytics = getAnalytics(app);

@@ -170,7 +170,7 @@ export function sendMessage() {
     if (message.trim() == "") return;
     const comment = {"date": stamp, "sender": author, "text": message, "likes": 0, "dislikes": 0};
     console.log("Sending message (" + author + "-" + message + ")")
-    
+
     const db = getDatabase();
     const newPostKey = push(child(ref(db), 'comments')).key;
     

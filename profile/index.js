@@ -4,7 +4,7 @@ export function editDescription(description) {
     btn.innerText = "done";
     
     const desc = document.getElementById("description");
-    desc.innerHTML = `<textarea id='descriptioninput' class='yourcommentinput'></textarea>`
+    desc.innerHTML = `<textarea id='descriptioninput' class='yourcommentinput' cols="2" rows="5"></textarea>`
     desc.firstChild.value = description;
     desc.appendChild(btn);
 
@@ -21,7 +21,7 @@ export function finishEditDescription() {
 
     const desc = document.getElementById("description");
     console.log(descinput);
-    console.log(descinput.value)
+    console.log(descinput.value);
     desc.innerText = descinput.value;
     desc.appendChild(btn);
 }
