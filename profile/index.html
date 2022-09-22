@@ -27,6 +27,9 @@
     <br>
     <span id="email" class="header3"></span>
     <br>
+    <br>
+    <span id="roles" class="header3"></span>
+    <br>
 
     <script type="module" src="./index.js"></script>
 
@@ -73,7 +76,14 @@
                     const usernametxt = document.getElementById("username");
                     usernametxt.innerText = username;
                     if (username == "Charles Game Dev") {
-                        // usernametxt.className += " gold";
+                        usernametxt.className += " gold";
+                    }
+                    else if (val.admin) {
+                        usernametxt.className += " purple";
+                    }
+                    
+                    if (val.admin) {
+                        document.getElementById("roles").textContent = "Admin";
                     }
                     const descriptiontxt = document.getElementById("description");
                     descriptiontxt.innerText = val.description;

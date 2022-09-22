@@ -18,7 +18,37 @@
         <button id="logoutbtn" class="yourcommentsend">Log out</button>
         <h1>Charles Game Dev</h1>
     </div>
-    <br>
+    <div class="topnavhidden">
+        <img src="assets/images/logo.png" width="256" height="256">
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <a href="https://trello.com/b/DdLIO8nm/charles-game-dev-site">Check out the website's progress!</a>
+    </div>
+    <!-- <br> -->
+
+    <div id="poll" class="poll">
+        <div id="pollname" class="header1 center">Loading data...</div>
+        <div id="polldesc" class="header3 center">Please wait</div>
+        <div id="pollstatus" class="center small">Please wait</div>
+
+        <br>
+
+        <div id="pollchoices"></div>
+            
+    </div>
+    <br />
+    <br />
 
     <div id="yourcomment" class="comment">
         <br />
@@ -32,8 +62,7 @@
         <br />
         <br />
     </div>
-    <span id="loadingcomments">
-    </span>
+    <span id="loadingcomments"></span>
     <br />
     <div id="comments">
     </div>
@@ -44,8 +73,8 @@
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-analytics.js";
-        import { getDatabase, ref, push, child, onValue } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-database.js";
-        import { loadComments, clearComments, sendMessage, isLoggedIn, firebaseConfig, getCookie, logout } from "./js/util.js";
+        import { getDatabase, ref, push, child, get, onValue } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-database.js";
+        import { loadComments, clearComments, sendMessage, isLoggedIn, firebaseConfig, getCookie, logout, loadPoll, timestampToDate } from "./js/util.js";
         // TODO: Add SDKs for Firebase products that you want to use
         // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -81,14 +110,47 @@
             const db = getDatabase();
             const dbRef = ref(db);
             const commentRef = ref(db, 'comments');
+            const pollRef = ref(db, 'polls');
             onValue(commentRef, (snapshot) => {
-                if (snapshot.val() == null) {
-                    clearComments();
-                } else {
+                if (snapshot.val() != null) {
                     const data = Object.entries(snapshot.val());
-                    loadComments(data);                    
+                    loadComments(data);
                 }
             });
+            onValue(pollRef, snapshot => {
+                const poll = snapshot.val();
+                if (!snapshot.exists() || !poll.active) {
+                    document.getElementById("poll").remove();
+                }
+                else
+                {
+                    document.getElementById("pollname").innerText = poll.name;
+                    document.getElementById("polldesc").innerText = poll.description;
+                    let status = "";
+                    if (poll.active) {
+                        const now = new Date().getTime() / 1000;
+                        if (now > poll.end_date) {
+                            status = "This poll ended at " + timestampToDate(poll.end_date);
+                            poll.active = false;
+                        }
+                        else if (now < poll.start_date) {
+                            status = "This poll starts at " + timestampToDate(poll.start_date);
+                            poll.active = false;
+                        }
+                        else if (!isLoggedIn()) {
+                            status = "You must be logged in to vote on polls!";
+                            poll.active = false;
+                        }
+                        else {
+                            status = "This poll has started!";
+                        }
+                    } else {
+                        status = "This poll has ended.";
+                    }
+                    document.getElementById("pollstatus").innerText = status;
+                    loadPoll(poll);
+                }
+            })
         });
 
       </script>

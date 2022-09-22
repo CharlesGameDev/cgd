@@ -1,6 +1,6 @@
 import { ref, set, get, push, child, update, remove, getDatabase } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-database.js";
 
-function timestampToDate(stamp) {
+export function timestampToDate(stamp) {
     const date = new Date(stamp * 1000);
     let hours = date.getHours();
     let part = "AM";
@@ -27,36 +27,41 @@ export function clearComments() {
 }
 
 export function loadComments(comments) {
-    document.getElementById("loadingcomments").innerText = `Loading comments (0/${comments.length})`;
+    const loadingComments = document.getElementById("loadingcomments");
+    loadingComments.innerText = ` Loading comments (0/${comments.length})`;
     clearComments();
     console.log("Loading comments (" + comments.length + ")");
     comments = comments.reverse();
-    for (let i = 0; i < comments.length; i++) {
-        createComment(comments[i][1], comments[i][0]);
-        document.getElementById("loadingcomments").innerText = `Loading comments (${i + 1}/${comments.length})`;
-    }
-    document.getElementById("loadingcomments").innerText = "";
+    getLoggedUserMeta().then(snapshot => {
+        const user = snapshot.val();
+        for (let i = 0; i < comments.length; i++) {
+            createComment(comments[i][1], comments[i][0], user);
+            // loadingComments.innerText = `Loading comments (${i + 1}/${comments.length})`;
+        }
+    })
+    loadingComments.innerText = "";
 }
 
-function createComment(comment, index) {
+function createComment(comment, index, user) {
     getCommentMeta(index, function(commentMeta) {
-        console.log(index);
+        // console.log(index);
         const commentdiv = document.createElement("div");
         commentdiv.className = "comment";
         commentdiv.id = index;
-    
+
         commentdiv.appendChild(document.createElement("br"))
         const date = document.createElement("span");
         date.className = "commentbody commentbodysmall";
         date.innerText = timestampToDate(comment.date);
         commentdiv.appendChild(date);
         commentdiv.appendChild(document.createElement("br"))
-    
+
         const author = document.createElement("span");
         author.className = "commentbody";
+        author.id = index + "-sender";
         author.innerText = comment.sender;
         commentdiv.appendChild(author);
-    
+
         commentdiv.appendChild(document.createElement("br"))
         commentdiv.appendChild(document.createElement("br"))
     
@@ -102,13 +107,14 @@ function createComment(comment, index) {
         const disliketext = document.createElement("span");
         disliketext.innerText = " " + comment.dislikes;
         disliketext.id = "dislikes";
-    
+
         commentdiv.appendChild(dislike);
         commentdiv.appendChild(disliketext);
     
-        if (commentMeta && commentMeta.owned) {
+        // console.log(commentMeta);
+        if ((commentMeta != null && commentMeta.owned) || user.admin == true) {
             const del = document.createElement("button");
-            del.addEventListener("click", () => deleteComment(commentMeta));
+            del.addEventListener("click", () => deleteComment(index));
             del.id = "deletebtn";
             del.className = "yourcommentsend yourcommentsend2 yourcommentsend4 material-symbols-outlined";
             del.innerText = "delete";
@@ -124,14 +130,34 @@ function createComment(comment, index) {
         commentsdiv.appendChild(document.createElement("br"));
 
         formatComment(message);
-    });
+    })
 }
 
 export function formatComment(commentHTML) {
     get(child(ref(getDatabase()), "users")).then((snapshot) => {
         const users = Object.entries(snapshot.val());
         users.forEach(user => {
+            const author = commentHTML.parentNode.childNodes[3];
+            let enableHref = true;
             commentHTML.innerHTML = commentHTML.innerHTML.replaceAll("@" + user[0], `<a href='profile/?user=${user[0]}'>@${user[0]}</a>`);
+            if (author.textContent == "Charles Game Dev") {
+                author.className += " gold";
+            } else {
+                getLoggedUserMeta(author.textContent).then((snapshot) => {
+                    if (snapshot.exists()) {
+                        const user = snapshot.val();
+                        if (user.admin) {
+                            author.className += " purple";
+                        }
+                    } else {
+                        enableHref = false;
+                        author.textContent = "Deleted user";
+                    }
+                });
+            }
+            if (enableHref) {
+                author.innerHTML = author.innerHTML.replaceAll(user[0], `<a href='profile/?user=${user[0]}'>${user[0]}</a>`);
+            }
         });
     });
 }
@@ -204,13 +230,13 @@ export function dislikeComment(commentMeta) {
     set(ref(db, "comments/" + commentMeta.id + "/dislikes"), dislikesn)
 }
 
-export function deleteComment(commentMeta) {
-    if (!commentMeta || !commentMeta.owned || (!confirm("Are you sure?") || !confirm("Are you super sure?") || !confirm("Are you surer than Raggy after committing kill?"))) return;
-    console.log("delete " + commentMeta.id);
-    
+export function deleteComment(id) {
+    if (!confirm("Are you sure?") || !confirm("Are you super sure?") || !confirm("Are you surer than Raggy after committing kill?")) return;
+    console.log("delete " + id);
+
     const db = getDatabase();
-    remove(ref(db, "comments/" + commentMeta.id))
-    remove(ref(db, "users/" + getCookie("username") + "/comments/" + commentMeta.id))
+    remove(ref(db, "comments/" + id))
+    remove(ref(db, "users/" + getCookie("username") + "/comments/" + id))
     alert("Then the comment was deleted.")
 }
 
@@ -273,6 +299,61 @@ export function getCookie(cname) {
         }
     }
     return "";
+}
+
+export function loadPoll(poll) {
+    /*
+    <input type="checkbox" id="choice1"> CHECKBOX HAHA <span id="choice1votes" class="small">(0 votes)</span>
+    <br>
+    */
+    const choices = document.getElementById("pollchoices");
+    while (choices.hasChildNodes()) {
+        choices.firstChild.remove();
+    }
+
+    const options = Object.entries(poll.options);
+    for (let i = 0; i < options.length; i++) {
+        const choicedata = options[i];
+        let votes = 0;
+        let hasVoted = false;
+        if (choicedata[1].users) {
+            Object.entries(choicedata[1].users).forEach(element => {
+                if (element[1] == true) {
+                    votes++;
+                    if (element[0] == getCookie("username")) {
+                        hasVoted = true;
+                    }
+                }
+            });
+        }
+        if (document.getElementById("choice" + i) != null) {
+            document.getElementById("choice" + i).remove();
+        }
+        const choice = document.createElement(poll.active ? "input" : "input2");
+        choice.type = "checkbox";
+        choice.id = "choice" + i;
+        choice.name = choice.id;
+        if (hasVoted)
+            choice.setAttribute("checked", true);
+        // choice.setAttribute("onclick", `voteOnPoll(${poll}, ${choicedata}, this);`);
+
+        choices.appendChild(choice);
+        document.addEventListener("click", function(event) {
+            if (event.target && event.target.id == choice.id) {
+                voteOnPoll(poll, choicedata, event.target);
+            }
+        })
+        const plur = votes == 1 ? "vote" : "votes";
+        choice.outerHTML += ` ${choicedata[0]} <span id="choice${i}votes" class="small">(${votes} ${plur})</span> <br />`;
+    }
+}
+
+export function voteOnPoll(poll, choicedata, el) {
+    const pollPath = "polls/options/" + choicedata[0] + "/users/" + getCookie("username");
+    get(child(ref(getDatabase()), pollPath)).then((snapshot) => {
+        let hasChecked = el.checked;
+        set(ref(getDatabase(), pollPath), hasChecked)
+    })
 }
 
 export function firebaseConfig() {

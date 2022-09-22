@@ -91,7 +91,7 @@
                     setCookie("username", username);
                     setCookie("email", email);
                     setCookie("hash", pass);
-                    const userdat = {"comments": {}, "email": email, hash: pass, "showemail": showemail};
+                    const userdat = {"comments": {}, "email": email, hash: pass, "showemail": showemail, "admin": false};
 
                     const updates = {};
                     updates["users/" + username] = userdat;
