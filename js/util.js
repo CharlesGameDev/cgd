@@ -26,15 +26,17 @@ export function clearComments() {
     }
 }
 
-export function loadComments(comments) {
+export function loadComments(comments, maxlength) {
     const loadingComments = document.getElementById("loadingcomments");
     loadingComments.innerText = ` Loading comments (0/${comments.length})`;
     clearComments();
     console.log("Loading comments (" + comments.length + ")");
     comments = comments.reverse();
+    let length = comments.length;
+    if (length > maxlength) length = maxlength;
     getLoggedUserMeta().then(snapshot => {
         const user = snapshot.val();
-        for (let i = 0; i < comments.length; i++) {
+        for (let i = 0; i < length; i++) {
             createComment(comments[i][1], comments[i][0], user);
             // loadingComments.innerText = `Loading comments (${i + 1}/${comments.length})`;
         }

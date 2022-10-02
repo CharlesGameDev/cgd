@@ -35,6 +35,10 @@ body {
     font-weight: bold;
 }
 
+.default {
+    font-family: 'Courier';
+}
+
 .center {
     text-align: center;
 }
@@ -45,7 +49,7 @@ body {
 
 .poll {
     width: 550px;
-    height: 400px;
+    height: 320px;
     border-style: solid;
     border-color: var(--colori);
     background-color: var(--color2);
@@ -103,7 +107,7 @@ body {
     height: 40px;
 }
 .yourcommentsend2:hover {
-    background-color: var(--color7)
+    background-color: var(--color7);
 }
 .yourcommentsend3 {
     background-color: var(--color7);
