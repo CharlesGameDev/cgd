@@ -24,6 +24,7 @@
     --color6: #6b6b6b;
     --color7: #2b2bFb;
     --color8: #Fb2b2b;
+    --color9: #fbb22b;
     --background-color: var(--color1);
 }
 /* } */
@@ -33,6 +34,18 @@ body {
     color: var(--color);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-weight: bold;
+}
+
+.charles {
+    color: var(--color6);
+}
+
+.taycin {
+    color: var(--color8);
+}
+
+.oliver {
+    color: var(--color9);
 }
 
 .center {
